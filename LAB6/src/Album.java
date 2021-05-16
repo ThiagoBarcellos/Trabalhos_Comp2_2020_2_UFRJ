@@ -100,14 +100,15 @@ public class Album {
     }
 
     public void autoCompletar() {
-        if(getQuantItensFaltantes() == getTamanho() || getQuantItensColados() < (PERCENTUAL_MINIMO_PARA_AUTO_COMPLETAR
-                * repositorio.getTotalFigurinhas())/100){
+        if(getQuantItensFaltantes() == getTamanho() || getQuantItensColados() < (int)(PERCENTUAL_MINIMO_PARA_AUTO_COMPLETAR
+                * repositorio.getTotalFigurinhas())/100f){
             return;
         }
 
-        for (int i = 0; i < repositorio.getTotalFigurinhas(); i++){
+        for (int i = 1; i < figurinhasColadas.size(); i++){
             if(figurinhasColadas.get(i) == null){
-                figurinhasColadas.set(i, new Figurinha(i, null));
+                Figurinha fig = new Figurinha(i, null);
+                this.figurinhasColadas.set(i, fig);
                 this.quantFigurinhasColadas++;
             }
         }

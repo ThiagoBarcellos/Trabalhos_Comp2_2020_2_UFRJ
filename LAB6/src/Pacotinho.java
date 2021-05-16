@@ -25,7 +25,8 @@ public class Pacotinho {
         figurinhas = new Figurinha[quantFigurinhas];
         for (int i = 0; i < quantFigurinhas; i++){
             Random numeros = new Random();
-            figurinhas[i] = new Figurinha(numeros.nextInt(repo.getTotalFigurinhas()), null);
+            int pos = numeros.nextInt(repo.getTotalFigurinhas()) + 1;
+            figurinhas[i] = new Figurinha(pos, null);
         }
     }
 
