@@ -13,7 +13,7 @@ public class Album {
     private final Repositorio repositorio;
     private final int quantItensPorPacotinho;
 
-    private List<Figurinha> figurinhasColadas;  // direct addressing
+    private List<Colecionavel> figurinhasColadas;  // direct addressing
     private int quantFigurinhasColadas;
 
     // poderíamos fazer novamente direct addressing para as repetidas,
@@ -63,7 +63,7 @@ public class Album {
         }
     }
 
-    public Figurinha getItemColado(int posicao) {
+    public Colecionavel getItemColado(int posicao) {
         return figurinhasColadas.get(posicao);
     }
 
@@ -120,20 +120,15 @@ public class Album {
                 : IMAGEM_PADRAO_PARA_POSICAO_VAZIA;
     }
 
-//    public static void main(String[] args) {
-//        ArrayList<Integer> meuArrayList = new ArrayList<>(200);
-//
-//        // inicializa as posições com nulls, para poder acessá-las diretamente
-//        for (int i = 0; i < 200; i++) {
-//            meuArrayList.add(null);
-//        }
-//
-////        System.out.println(meuArrayList.get(3));
-//
-//        meuArrayList.add(3, 300000);  // insert com shift right
-//
-//        for (int numero : meuArrayList) {
-//            System.out.println(numero);
-//        }
-//    }
+    public static void main(String[] args) {
+        List<Colecionavel> figurinhasColadas = new ArrayList<>(2);
+        Selo selo = new Selo(0, 0.15f,"Brazil");
+        Figurinha fig = new Figurinha(1, null);
+        figurinhasColadas.add(selo);
+        figurinhasColadas.add(fig);
+
+        for(Colecionavel col : figurinhasColadas){
+            System.out.println(col);
+        }
+    }
 }
