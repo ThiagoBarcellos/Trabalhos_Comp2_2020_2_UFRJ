@@ -43,7 +43,7 @@ public class Pacotinho<T extends Colecionavel> {
             }
         }
         else{
-            System.out.println("Pacotinho de tipo diferente do repositório!!!!");
+            System.out.println("Pacotinho de tipo diferente do repositório!!");
         }
     }
 

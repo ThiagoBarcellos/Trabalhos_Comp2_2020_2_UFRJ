@@ -134,17 +134,30 @@ public class AlbumTest {
         Album<Figurinha> albumFig = new Album<>(repoFig,ITENS_POR_PACOTE, figReferencia);
 
         Pacotinho<Figurinha> pacFig = new Pacotinho<>(repoFig,new int[]{0,1,2},figReferencia);
-
         Pacotinho<Selo> pacSelo = new Pacotinho<>(repoFig,new int[]{3,4,5},seloReferencia);
 
         //Deve aceitar e adicionar ao album
         albumFig.receberNovoPacotinho(pacFig);
         assertEquals(3, albumFig.getQuantItensColados());
 
-
         //Deve rejeitar e não adicionar ao album, retornando somente a quantidade já presente no album
         albumFig.receberNovoPacotinho(pacSelo);
         assertEquals(3, albumFig.getQuantItensColados());
+    }
+
+    @Test
+    public void testarAdicionarTipoDiferenteDoAlbum(){
+        Figurinha figReferencia = new Figurinha(0,null);
+        Selo seloReferencia = new Selo(0,null);
+
+        Repositorio<Selo> repoFig = new Repositorio<>(null, TAMANHO_DO_ALBUM, seloReferencia);
+        Album<Figurinha> albumSelo = new Album<>(repoFig,ITENS_POR_PACOTE, figReferencia);
+
+        Pacotinho<Selo> pacSelo = new Pacotinho<>(repoFig,new int[]{3,4,5},seloReferencia);
+
+        //Deve rejeitar pois o album não condiz com o repositório e com o pacotinho
+        albumSelo.receberNovoPacotinho(pacSelo);
+        assertEquals(0, albumSelo.getQuantItensColados());
     }
 
 }
