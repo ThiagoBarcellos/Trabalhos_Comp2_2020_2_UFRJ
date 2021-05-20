@@ -4,11 +4,11 @@ public class Selo implements Colecionavel{
     private int posicao;
     private float valorNominal;
     private String paisOrigem;
+    private String urlDaImagem;
 
-    public Selo(int posicao, float valorNominal, String paisOrigem){
+    public Selo(int posicao, String urlDaImagem){
         this.posicao = posicao;
-        this.valorNominal = valorNominal;
-        this.paisOrigem = paisOrigem;
+        this.urlDaImagem = urlDaImagem;
     }
 
     public float getValorNominal() {

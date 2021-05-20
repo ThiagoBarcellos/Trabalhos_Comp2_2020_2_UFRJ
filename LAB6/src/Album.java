@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Album {
+public class Album <T extends Colecionavel> {
 
     public static final int PERCENTUAL_MINIMO_PARA_AUTO_COMPLETAR = 90;
 
@@ -13,62 +13,74 @@ public class Album {
     private final Repositorio repositorio;
     private final int quantItensPorPacotinho;
 
-    private List<Colecionavel> figurinhasColadas;  // direct addressing
-    private int quantFigurinhasColadas;
+    private List<T> colecionaveisColados;  // direct addressing
+    private int quantColecionaveisColadas;
+
+    private final T objetoReferencia;
 
     // poderíamos fazer novamente direct addressing para as repetidas,
     // mas vamos usar um HashMap aqui só para treinarmos
     private Map<Integer, Integer> contRepetidasByPosicao;
 
-    public Album(Repositorio repositorio, int quantItensPorPacotinho) {
+    public Album(Repositorio repositorio, int quantItensPorPacotinho, T objetoReferencia) {
         this.repositorio = repositorio;
         this.quantItensPorPacotinho = quantItensPorPacotinho;
+        this.objetoReferencia = objetoReferencia;
 
         int tamanhoFisicoDaLista = getTamanho() + 1;
-        this.figurinhasColadas = new ArrayList<>(tamanhoFisicoDaLista);
+        this.colecionaveisColados = new ArrayList<>(tamanhoFisicoDaLista);
         // inicializa as posições com nulls, para poder acessá-las diretamente
         for (int i = 0; i < tamanhoFisicoDaLista; i++) {
-            this.figurinhasColadas.add(null);
+            this.colecionaveisColados.add(null);
         }
-        this.quantFigurinhasColadas = 0;
+        this.quantColecionaveisColadas = 0;
 
         this.contRepetidasByPosicao = new HashMap<>();
     }
 
+    public String getClasse(){
+        return objetoReferencia.getClass().toString().intern();
+    }
+
     public void receberNovoPacotinho(Pacotinho pacotinho) {
-        Figurinha[] figurinhasDoPacotinho = pacotinho.getFigurinhas();
-        if (figurinhasDoPacotinho.length != this.quantItensPorPacotinho) {
+        List<T> figurinhasDoPacotinho = new ArrayList<>(pacotinho.getColecionaveis());
+        if (figurinhasDoPacotinho.size() != this.quantItensPorPacotinho) {
             return;  // melhor ainda: lançaria uma checked exception
         }
 
-        for (Figurinha fig : pacotinho.getFigurinhas()) {
-            final int posicao = fig.getPosicao();
-            if (possuiItemColado(posicao)) {
-                // adiciona como repetida
+        if (getClasse().equalsIgnoreCase(pacotinho.getClasse())){
+            for (T item : (List<T>)pacotinho.getColecionaveis()) {
+                final int posicao = item.getPosicao();
+                if (possuiItemColado(posicao)) {
+                    // adiciona como repetida
 
-                // jeito pior
-//                Integer contRepetidas = this.contRepetidasByPosicao.get(posicao);
-//                this.contRepetidasByPosicao.put(
-//                        posicao, contRepetidas == null ? 1 : contRepetidas + 1);
+                    // jeito pior
+    //                Integer contRepetidas = this.contRepetidasByPosicao.get(posicao);
+    //                this.contRepetidasByPosicao.put(
+    //                        posicao, contRepetidas == null ? 1 : contRepetidas + 1);
 
-                // jeito mais elegante: getOrDefault
-                int contRepetidas = this.contRepetidasByPosicao.getOrDefault(posicao, 0);
-                this.contRepetidasByPosicao.put(posicao, contRepetidas + 1);
+                    // jeito mais elegante: getOrDefault
+                    int contRepetidas = this.contRepetidasByPosicao.getOrDefault(posicao, 0);
+                    this.contRepetidasByPosicao.put(posicao, contRepetidas + 1);
 
-            } else {
-                // item inédito
-                this.figurinhasColadas.set(posicao, fig);
-                this.quantFigurinhasColadas++;
+                } else {
+                    // item inédito
+                    this.colecionaveisColados.set(posicao, (T)item);
+                    this.quantColecionaveisColadas++;
+                }
             }
+        }
+        else{
+            System.out.println("Pacotinho de tipo diferente do album!!");
         }
     }
 
-    public Colecionavel getItemColado(int posicao) {
-        return figurinhasColadas.get(posicao);
+    public T getItemColado(int posicao) {
+        return colecionaveisColados.get(posicao);
     }
 
     public boolean possuiItemColado(int posicao) {
-        return posicao > 0 && posicao < figurinhasColadas.size() && figurinhasColadas.get(posicao) != null ? true : false;
+        return posicao > 0 && posicao < colecionaveisColados.size() && colecionaveisColados.get(posicao) != null ? true : false;
     }
 
     public boolean possuiItemRepetido(int posicao) {
@@ -83,16 +95,7 @@ public class Album {
     }
 
     public int getQuantItensColados() {
-//        int contador = 0;
-//        for (Figurinha fig : this.figurinhasColadas) {
-//            if (fig != null) {
-//                contador++;
-//            }
-//        }
-//        return contador;
-
-        // melhor jeito: atributo!
-        return this.quantFigurinhasColadas;
+        return this.quantColecionaveisColadas;
     }
 
     public int getQuantItensFaltantes() {
@@ -105,11 +108,11 @@ public class Album {
             return;
         }
 
-        for (int i = 1; i < figurinhasColadas.size(); i++){
-            if(figurinhasColadas.get(i) == null){
+        for (int i = 1; i < colecionaveisColados.size(); i++){
+            if(colecionaveisColados.get(i) == null){
                 Figurinha fig = new Figurinha(i, null);
-                this.figurinhasColadas.set(i, fig);
-                this.quantFigurinhasColadas++;
+                this.colecionaveisColados.set(i, (T)fig);
+                this.quantColecionaveisColadas++;
             }
         }
     }
@@ -121,14 +124,14 @@ public class Album {
     }
 
     public static void main(String[] args) {
-        List<Colecionavel> figurinhasColadas = new ArrayList<>(2);
-        Selo selo = new Selo(0, 0.15f,"Brazil");
-        Figurinha fig = new Figurinha(1, null);
-        figurinhasColadas.add(selo);
-        figurinhasColadas.add(fig);
-
-        for(Colecionavel col : figurinhasColadas){
-            System.out.println(col);
-        }
+//        Repositorio repo = new Repositorio("", 200);
+//        Album<Figurinha> album1 = new Album<Figurinha>(repo,3);
+//        Pacotinho<Figurinha> pacoteFigurinha = new Pacotinho<>(repo, new int[]{3,4,5});
+//        Pacotinho<Selo> pacoteSelo = new Pacotinho<>(repo, new int[]{0,1,2});
+//        album1.receberNovoPacotinho(pacoteFigurinha);
+//        album1.receberNovoPacotinho(pacoteSelo);
+//
+//        System.out.println(album1.getItemColado(2));
+//        System.out.println(album1.getItemColado(5));
     }
 }

@@ -5,20 +5,20 @@ import static org.junit.Assert.*;
 
 public class AlbumTest {
 
-    private Album albumFigurinhas;
-    private Repositorio repositorioFigurinhas;
+    private Album<Figurinha> albumFigurinhas;
+    private Repositorio<Figurinha> repositorioFigurinhas;
 
     private static final int TAMANHO_DO_ALBUM = 200;
     private static final int ITENS_POR_PACOTE = 3;
 
     @Before  // roda antes de cada teste
     public void setUp() {
-        this.repositorioFigurinhas = new Repositorio("album_copa2014", TAMANHO_DO_ALBUM);
-        this.albumFigurinhas = new Album(repositorioFigurinhas, ITENS_POR_PACOTE);
+        this.repositorioFigurinhas = new Repositorio("album_copa2014", TAMANHO_DO_ALBUM, new Figurinha(0,null));
+        this.albumFigurinhas = new Album(repositorioFigurinhas, ITENS_POR_PACOTE, new Figurinha(0,null));
     }
 
     private void popularAlbum(int[] posicoesDesejadas) {
-        Pacotinho pacote = new Pacotinho(this.repositorioFigurinhas, posicoesDesejadas);
+        Pacotinho<Figurinha> pacote = new Pacotinho(this.repositorioFigurinhas, posicoesDesejadas, new Figurinha(0,null));
         this.albumFigurinhas.receberNovoPacotinho(pacote);
     }
 
@@ -89,8 +89,8 @@ public class AlbumTest {
                 (int) (TAMANHO_DO_ALBUM * Album.PERCENTUAL_MINIMO_PARA_AUTO_COMPLETAR / 100f);
 
         while (albumFigurinhas.getQuantItensColados() < minimoFigurinhasColadasParaAutoCompletar) {
-            Pacotinho novoPacotinho = new Pacotinho(
-                    this.repositorioFigurinhas, ITENS_POR_PACOTE);  // aleatório
+            Pacotinho<Figurinha> novoPacotinho = new Pacotinho(
+                    this.repositorioFigurinhas, ITENS_POR_PACOTE, new Figurinha(0,null));  // aleatório
             albumFigurinhas.receberNovoPacotinho(novoPacotinho);
         }
 
@@ -107,7 +107,7 @@ public class AlbumTest {
     @Test
     public void testarGetItemColado() {
         popularAlbum(new int[] {1, 2, 3});
-        Colecionavel figurinha = albumFigurinhas.getItemColado(2);
+        Figurinha figurinha = (Figurinha) albumFigurinhas.getItemColado(2);
 
         assertNotNull(figurinha);
 
@@ -123,6 +123,28 @@ public class AlbumTest {
         assertEquals("Pacotes de tamanho distinto do informado na construção " +
                         "do álbum devem ser rejeitados",
                 0, albumFigurinhas.getQuantItensColados());
+    }
+
+    @Test
+    public void testarAdicionarMaisDeUmTipo(){
+        Figurinha figReferencia = new Figurinha(0,null);
+        Selo seloReferencia = new Selo(0,null);
+
+        Repositorio<Figurinha> repoFig = new Repositorio<>(null, TAMANHO_DO_ALBUM, figReferencia);
+        Album<Figurinha> albumFig = new Album<>(repoFig,ITENS_POR_PACOTE, figReferencia);
+
+        Pacotinho<Figurinha> pacFig = new Pacotinho<>(repoFig,new int[]{0,1,2},figReferencia);
+
+        Pacotinho<Selo> pacSelo = new Pacotinho<>(repoFig,new int[]{3,4,5},seloReferencia);
+
+        //Deve aceitar e adicionar ao album
+        albumFig.receberNovoPacotinho(pacFig);
+        assertEquals(3, albumFig.getQuantItensColados());
+
+
+        //Deve rejeitar e não adicionar ao album, retornando somente a quantidade já presente no album
+        albumFig.receberNovoPacotinho(pacSelo);
+        assertEquals(3, albumFig.getQuantItensColados());
     }
 
 }
