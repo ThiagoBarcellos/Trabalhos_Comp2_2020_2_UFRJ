@@ -52,11 +52,9 @@ public class TuiterLite {
 
     public Set getHashtagsTuite(String texto){
         Set<String> hashTags = new HashSet<>();
-        String[] particoesTexto = texto.split("\\s+");
+        String[] particoesTexto = texto.split("[^a-zA-Z\\d\\#]+");
         for (int i = 0; i < particoesTexto.length; i++){
-            System.out.println(particoesTexto[i]);
-            char c = particoesTexto[i].charAt(0);
-            if(c == '#'){
+            if(particoesTexto[i].toLowerCase().matches("#+([0-9]*[a-z]*[0-9]*[a-z]*)+")){
                 if(quantidadeByHashtag.get(particoesTexto[i]) == null){
                     hashTags.add(particoesTexto[i]);
                     quantidadeByHashtag.put(particoesTexto[i], 1);
