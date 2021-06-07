@@ -77,11 +77,6 @@ public class TuiterLite<T>{
             return null;
         }
 
-//        if (texto == null || texto.length() == 0 || texto.length() > TAMANHO_MAXIMO_TUITES ||
-//                usuario == null || !this.usuarioByEmail.containsKey(usuario.getEmail())) {
-//            return null;
-//        }
-
         Set<String> hashtags = obterHashtags(texto);
         Tuite tuite = new Tuite(usuario, texto, hashtags);
 
